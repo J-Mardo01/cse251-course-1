@@ -122,6 +122,42 @@ def draw_rectangles(tur):
             draw_rectangle(tur, x-10, y+5, 20, 15)
 
 
+def draw_threaded_squares(tur, lock):
+    """Draw a group of squares"""
+    lock.acquire()
+    for x in range(-300, 350, 200):
+        for y in range(-300, 350, 200):
+            draw_square(tur, x - 50, y + 50, 100)
+    lock.release()
+
+
+def draw_threaded_circles(tur, lock):
+    """Draw a group of circles"""
+    lock.acquire()
+    for x in range(-300, 350, 200):
+        for y in range(-300, 350, 200):
+            draw_circle(tur, x, y-2, 50)
+    lock.release()
+
+
+def draw_threaded_triangles(tur, lock):
+    """Draw a group of triangles"""
+    lock.acquire()
+    for x in range(-300, 350, 200):
+        for y in range(-300, 350, 200):
+            draw_triangle(tur, x-30, y-30+10, 60)
+    lock.release()
+
+
+def draw_threaded_rectangles(tur, lock):
+    """Draw a group of Rectangles"""
+    lock.acquire()
+    for x in range(-300, 350, 200):
+        for y in range(-300, 350, 200):
+            draw_rectangle(tur, x-10, y+5, 20, 15)
+    lock.release()
+
+
 def run_no_threads(tur, log, main_turtle):
     """Draw different shapes without using threads"""
 
@@ -171,6 +207,28 @@ def run_with_threads(tur, log, main_turtle):
     # TODO - Start add your code here.
     # You need to use 4 threads where each thread concurrently drawing one type of shape.
     # You are free to change any functions in this code except main()
+    # CODE STARTS HERE ---->
+
+    lock = threading.Lock()
+
+    t1 = threading.Thread(target= draw_threaded_circles, args =(tur, lock))
+    t2 = threading.Thread(target=draw_threaded_triangles, args=(tur, lock))
+    t3 = threading.Thread(target=draw_threaded_squares, args= (tur, lock))
+    t4 = threading.Thread(target=draw_threaded_rectangles, args= (tur, lock))
+
+    
+    t1.start()
+    t2.start()
+    t3.start()
+    t4.start()
+
+    t1.join()
+    t2.join()
+    t3.join()
+    t4.join()
+
+
+    # <------ CODE ENDS HERE
 
     log.step_timer('All drawing commands have been created')
 
