@@ -124,38 +124,46 @@ def draw_rectangles(tur):
 
 def draw_threaded_squares(tur, lock):
     """Draw a group of squares"""
-    lock.acquire()
+    #lock.acquire()
     for x in range(-300, 350, 200):
         for y in range(-300, 350, 200):
+            lock.acquire()
             draw_square(tur, x - 50, y + 50, 100)
-    lock.release()
+            lock.release()
+    #lock.release()
 
 
 def draw_threaded_circles(tur, lock):
     """Draw a group of circles"""
-    lock.acquire()
+    #lock.acquire()
     for x in range(-300, 350, 200):
         for y in range(-300, 350, 200):
+            lock.acquire()
             draw_circle(tur, x, y-2, 50)
-    lock.release()
+            lock.release()
+    #lock.release()
 
 
 def draw_threaded_triangles(tur, lock):
     """Draw a group of triangles"""
-    lock.acquire()
+    #lock.acquire()
     for x in range(-300, 350, 200):
         for y in range(-300, 350, 200):
+            lock.acquire()
             draw_triangle(tur, x-30, y-30+10, 60)
-    lock.release()
+            lock.release()
+    #lock.release()
 
 
 def draw_threaded_rectangles(tur, lock):
     """Draw a group of Rectangles"""
-    lock.acquire()
+    #lock.acquire()
     for x in range(-300, 350, 200):
         for y in range(-300, 350, 200):
+            lock.acquire()
             draw_rectangle(tur, x-10, y+5, 20, 15)
-    lock.release()
+            lock.release()
+    #lock.release()
 
 
 def run_no_threads(tur, log, main_turtle):
@@ -211,17 +219,19 @@ def run_with_threads(tur, log, main_turtle):
 
     lock = threading.Lock()
 
-    t1 = threading.Thread(target= draw_threaded_circles, args =(tur, lock))
-    t2 = threading.Thread(target=draw_threaded_triangles, args=(tur, lock))
+    # create threads
+    t1 = threading.Thread(target= draw_threaded_circles, args= (tur, lock))
+    t2 = threading.Thread(target=draw_threaded_triangles, args= (tur, lock))
     t3 = threading.Thread(target=draw_threaded_squares, args= (tur, lock))
     t4 = threading.Thread(target=draw_threaded_rectangles, args= (tur, lock))
 
-    
+    # Start threads
     t1.start()
     t2.start()
     t3.start()
     t4.start()
 
+    # join threads
     t1.join()
     t2.join()
     t3.join()
@@ -260,10 +270,10 @@ def main():
 
     # Test 1 - Drawing with no threads
     # remove the file 'drawpart1.txt' to stop drawing part 1
-    if os.path.exists('drawpart1.txt'):
-        run_no_threads(turtle251, log, main_turtle)
+    #if os.path.exists('drawpart1.txt'):
+    #    run_no_threads(turtle251, log, main_turtle)
     
-    main_turtle.clear()
+    #main_turtle.clear()
 
     # Test 2 - Drawing with threads
     run_with_threads(turtle251, log, main_turtle)
