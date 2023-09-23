@@ -68,6 +68,11 @@ class Deck:
         req = Request_thread(rf'https://deckofcardsapi.com/api/deck/{self.id}/draw/')
         req.start()
         req.join()
+        if req.response != {}:
+            self.remaining = req.response['remaining']
+            return req.response['cards'][0]['code']
+        else:
+            return ''
 
         
 
