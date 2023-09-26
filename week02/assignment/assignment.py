@@ -38,6 +38,10 @@ this dictionary to make other API calls for data.
 }
 """
 
+# I think this program deserves a 2 because I was not able to get the desired output
+# nor could I iterate through the response correctly, but I was able to 
+#begin to return something to the terminal.
+
 from datetime import datetime, timedelta
 import requests
 import json
