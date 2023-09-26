@@ -71,10 +71,30 @@ class Request_Thread(threading.Thread):
 
     if response.status_code == 200:
         self.response = response.json()
+        #print(self.response)
     else:
         print("Didn't work", response.status_code)
 
 # TODO Add any functions you need here
+def get_top_url(url):
+    req = Request_Thread(url)
+    req.start()
+    req.join()
+    #print(req.response)
+    return req.response
+
+def get_film_six_details(url):
+   req = Request_Thread(url["films"] + "6/")
+   req.start()
+   req.join()
+   #print(req.response)
+   return req.response
+
+def get_character(url):
+  req = Request_Thread(url["characters"][0])
+  req.start()
+  req.join()
+  print(req.response["name"])
 
 
 def main():
@@ -82,18 +102,21 @@ def main():
     log.start_timer('Starting to retrieve data from the server')
 
     # TODO Retrieve Top API urls
-    req = Request_Thread(TOP_API_URL)
-    req.start()
-    req.join()
+    main_url = get_top_url(TOP_API_URL)
+    #print(main_url["films"])
 
     # TODO Retrieve Details on film 6
+    film_detail = get_film_six_details(main_url)
+    #print(film_detail)
+    name1 = get_character(film_detail)
+
 
     # TODO Display results
 
-    #characters.sort()
 
+    #characters.sort()
     #log.write(f'Characters: {len(resonses["characters"])}')
-    #log.write(', ')
+    #log.write(', '.join(characters))
     log.stop_timer('Total Time To complete')
     log.write(f'There were {call_count} calls to the server')
     
