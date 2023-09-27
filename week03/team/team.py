@@ -92,6 +92,8 @@ class Board():
                       ['A', 'I', 'S', 'O', 'E', 'G', 'P', 'G', 'O', 'M', 'Y', 'O', 'Z', 'C', 'E', 'D', 'R', 'D', 'T', 'U', 'N', 'I', 'A', 'S', 'S'], 
                       ['F', 'R', 'O', 'N', 'G', 'A', 'A', 'A', 'A', 'C', 'C', 'P', 'V', 'R', 'K', 'D', 'U', 'A', 'I', 'A', 'R', 'D', 'Z', 'E', 'D'], 
                       ['D', 'C', 'D', 'V', 'A', 'Z', 'N', 'G', 'S', 'O', 'L', 'D', 'I', 'E', 'I', 'I', 'D', 'S', 'S', 'F', 'C', 'N', 'U', 'A', 'I']]
+        
+        
 
 
     def highlight(self, row, col, on=True):
