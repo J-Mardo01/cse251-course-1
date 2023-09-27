@@ -95,10 +95,11 @@ def get_film_six_details(url):
    return req.response
 
 def get_character(url):
-  req = Request_Thread(url["characters"][0])
-  req.start()
-  req.join()
-  print(req.response["name"])
+  for i in url.values():
+    req = Request_Thread(url["characters"][i])
+    req.start()
+    req.join()
+    print(req.response["name"])
 
 
 def main():
