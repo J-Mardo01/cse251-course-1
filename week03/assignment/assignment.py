@@ -62,6 +62,9 @@ def create_new_frame(image_file, green_file, process_file):
 
 # TODO add any functions to need here
 
+def process_pool():
+    pass
+
 
 
 if __name__ == '__main__':
