@@ -63,6 +63,15 @@ def create_new_frame(image_file, green_file, process_file):
 # TODO add any functions to need here
 
 def process_pool():
+    image_number = 10
+
+    image_file = rf'elephant/image{image_number:03d}.png'
+    green_file = rf'green/image{image_number:03d}.png'
+    process_file = rf'processed/image{image_number:03d}.png'
+
+    start_time = timeit.default_timer()
+    create_new_frame(image_file, green_file, process_file)
+    print(f'\nTime To Process all images = {timeit.default_timer() - start_time}') # stops the timer
     pass
 
 
@@ -80,18 +89,24 @@ if __name__ == '__main__':
     # TODO Process all frames trying 1 cpu, then 2, then 3, ... to CPU_COUNT
     #      add results to xaxis_cpus and yaxis_times
 
+    for process in range(1,9):
+        all_process_time = timeit.default_timer()
+        with mp.Pool(CPU_COUNT) as p:
+            p.Map(process_pool,)
+        {timeit.default_timer() - start_time}
+
 
     # sample code: remove before submitting  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     # process one frame #10
-    image_number = 10
+    #image_number = 10
 
-    image_file = rf'elephant/image{image_number:03d}.png'
-    green_file = rf'green/image{image_number:03d}.png'
-    process_file = rf'processed/image{image_number:03d}.png'
+    #image_file = rf'elephant/image{image_number:03d}.png'
+    #green_file = rf'green/image{image_number:03d}.png'
+    #process_file = rf'processed/image{image_number:03d}.png'
 
-    start_time = timeit.default_timer()
-    create_new_frame(image_file, green_file, process_file)
-    print(f'\nTime To Process all images = {timeit.default_timer() - start_time}')
+    #start_time = timeit.default_timer()
+    #create_new_frame(image_file, green_file, process_file)
+    #print(f'\nTime To Process all images = {timeit.default_timer() - start_time}') # stops the timer
     # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
