@@ -82,10 +82,10 @@ if __name__ == '__main__':
 
       image_number = FRAME_COUNT
 
-      for n in range( 1, image_number + 1):
-        image_file = rf'elephant/image{n:03d}.png'
-        green_file = rf'green/image{n:03d}.png'
-        process_file = rf'processed/image{n:03d}.png'
+      for image in range( 1, image_number + 1):
+        image_file = rf'elephant/image{image:03d}.png'
+        green_file = rf'green/image{image:03d}.png'
+        process_file = rf'processed/image{image:03d}.png'
         image_list.append([image_file, green_file, process_file])
           
       with mp.Pool(x) as p:
@@ -95,7 +95,7 @@ if __name__ == '__main__':
 
       end_time = timeit.default_timer() - start_time
       yaxis_times.append(end_time)
-      print(f'\nTime To Process all images = {end_time}')
+      log.write(f'Time To Process all images = {end_time}')
 
     # sample code: remove before submitting  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     # process one frame #10
