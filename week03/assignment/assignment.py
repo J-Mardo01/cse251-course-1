@@ -31,7 +31,7 @@ CPU_COUNT = mp.cpu_count() + 4
 
 # TODO Your final video need to have 300 processed frames.  However, while you are 
 # testing your code, set this much lower
-FRAME_COUNT = 20
+FRAME_COUNT = 300
 
 RED   = 0
 GREEN = 1
@@ -62,19 +62,6 @@ def create_new_frame(image_file, green_file, process_file):
 
 # TODO add any functions to need here
 
-def process_pool():
-    image_number = 10
-
-    image_file = rf'elephant/image{image_number:03d}.png'
-    green_file = rf'green/image{image_number:03d}.png'
-    process_file = rf'processed/image{image_number:03d}.png'
-
-    start_time = timeit.default_timer()
-    create_new_frame(image_file, green_file, process_file)
-    print(f'\nTime To Process all images = {timeit.default_timer() - start_time}') # stops the timer
-    pass
-
-
 
 if __name__ == '__main__':
     # single_file_processing(300)
@@ -89,12 +76,26 @@ if __name__ == '__main__':
     # TODO Process all frames trying 1 cpu, then 2, then 3, ... to CPU_COUNT
     #      add results to xaxis_cpus and yaxis_times
 
-    for process in range(1,9):
-        all_process_time = timeit.default_timer()
-        with mp.Pool(CPU_COUNT) as p:
-            p.Map(process_pool,)
-        {timeit.default_timer() - start_time}
+    for x in range( 1, CPU_COUNT + 1):
+      image_list= []
+      start_time = timeit.default_timer()
 
+      image_number = FRAME_COUNT
+
+      for n in range( 1, image_number + 1):
+        image_file = rf'elephant/image{n:03d}.png'
+        green_file = rf'green/image{n:03d}.png'
+        process_file = rf'processed/image{n:03d}.png'
+        image_list.append([image_file, green_file, process_file])
+          
+      with mp.Pool(x) as p:
+        p.starmap(create_new_frame, image_list)
+
+      xaxis_cpus.append(x)
+
+      end_time = timeit.default_timer() - start_time
+      yaxis_times.append(end_time)
+      print(f'\nTime To Process all images = {end_time}')
 
     # sample code: remove before submitting  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     # process one frame #10
