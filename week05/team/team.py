@@ -24,7 +24,7 @@ from os.path import exists
 #Include cse 251 common Python files
 from cse251 import *
 
-PRIME_PROCESS_COUNT = 1
+PRIME_PROCESS_COUNT = 6
 
 def is_prime(n: int) -> bool:
     """Primality test using 6k+-1 optimization.
@@ -42,21 +42,27 @@ def is_prime(n: int) -> bool:
     return True
 
 # TODO create read_thread function
-def read_thread(queue:mp.Queue):
-    while True:
-        file = open('data.txt', 'r')
-        data = file.read()
-        queue.put(data)
+def read_thread(queue:mp.Queue, filename:str):
+    with open(filename, 'r') as file:
+        for line in file:
+            queue.put(int(line.strip()))
+    
+    queue.put("Done.") # OR
 
+    #for _ in range(PRIME_PROCESS_COUNT):
+    #queue.put("Done."")
+    #
 
 # TODO create prime_process function
-def prime_process(queue:mp.Queue, primes):
-    primes = []
+def prime_process(queue:mp.Queue, primes:list):
     while True:
         number = queue.get()
-        if is_prime(number) == True:
+        if number == "Done.":
+            queue.put("Done.")  #OR LINE 52
+            break
+        if is_prime(number):
             primes.append(number)
-            return primes
+
 
 def create_data_txt(filename):
     # only create if is doesn't exist 
@@ -76,20 +82,22 @@ def main():
     log.start_timer()
 
     # TODO Create shared data structures
-    data = mp.Manager().list([0])
+    primes = mp.Manager().list([0])
     queue = mp.Queue()
 
     # TODO create reading thread
-    reader = threading.Thread(target = read_thread, args = (queue,))
+    reader = threading.Thread(target = read_thread, args =  (queue, filename))
     # TODO create prime processes
-    primes = []
-    processes = mp.Process(target = prime_process, args = (queue, primes))
+    processes = [mp.Process(target = prime_process, args = (queue, primes)) for _ in range(PRIME_PROCESS_COUNT)]
+
     # TODO Start them all
     reader.start()
-    processes.start()
+    for p in processes:
+        p.start()
     # TODO wait for them to complete
     reader.join()
-    processes.join()
+    for p in processes:
+        p.join()
 
     log.stop_timer(f'All primes have been found using {PRIME_PROCESS_COUNT} processes')
 

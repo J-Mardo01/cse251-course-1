@@ -59,7 +59,7 @@ class Car():
         time.sleep(random.random() / (SLEEP_REDUCE_FACTOR))
 
         # Display the car that has was just created in the terminal
-        self.display()
+        self.display()   # comment out for debugging
            
     def display(self):
         print(f'{self.make} {self.model}, {self.year}')
@@ -123,8 +123,10 @@ def run_production(factory_count, dealer_count):
 
     # TODO Create semaphore(s) if needed
     # TODO Create queue
+    car_queue = Queue251()
     # TODO Create lock(s) if needed
     # TODO Create barrier
+    barrier = threading.Barrier()
 
     # This is used to track the number of cars receives by each dealer
     dealer_stats = list([0] * dealer_count)
