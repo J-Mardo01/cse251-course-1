@@ -17,13 +17,14 @@ Instructions:
 """
 
 import multiprocessing as mp
+import multiprocessing.connection
 from multiprocessing import Value, Process
 import filecmp 
 
 # Include cse 251 common Python files
 from cse251 import *
 
-def sender():
+def sender(filename, conn:multiprocessing.connection.Connection):
     """ function to send messages to other end of pipe """
     '''
     open the file
@@ -31,17 +32,27 @@ def sender():
     Note: you must break each line in the file into words and
           send those words through the pipe
     '''
-    pass
+    with open(filename, 'r') as file:
+        for line in file:
+            conn.send(line)
+        conn.send("None")
+        file.flush()
 
 
-def receiver():
+def receiver(filename, conn:multiprocessing.connection.Connection):
     """ function to print the messages received from other end of pipe """
     ''' 
     open the file for writing
     receive all content through the shared pipe and write to the file
     Keep track of the number of items sent over the pipe
     '''
-    pass
+    item = 0
+    with open(filename, 'w'):
+        while True:
+            data = conn.recv()
+            if data == "None":
+                break
+            item += 1
 
 
 def are_files_same(filename1, filename2):
@@ -51,6 +62,7 @@ def are_files_same(filename1, filename2):
 
 def copy_file(log, filename1, filename2):
     # TODO create a pipe 
+    parent_conn, child_conn = mp.Pipe()
     
     # TODO create variable to count items sent over the pipe
 

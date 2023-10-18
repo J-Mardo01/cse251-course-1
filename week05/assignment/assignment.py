@@ -158,8 +158,8 @@ def run_production(factory_count, dealer_count):
     """
 
     # TODO Create semaphore(s) if needed
-    sem1 = threading.Semaphore(0)
-    sem2 = threading.Semaphore(MAX_QUEUE_SIZE)
+    sem1 = threading.Semaphore(MAX_QUEUE_SIZE)
+    sem2 = threading.Semaphore(0)
     # TODO Create queue
     car_queue = Queue251()
     # TODO Create lock(s) if needed
