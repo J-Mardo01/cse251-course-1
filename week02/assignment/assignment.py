@@ -62,7 +62,6 @@ class Request_Thread(threading.Thread):
     
   # create constructor
   def __init__(self, url):
-
     threading.Thread.__init__(self)
 
     self.url = url
