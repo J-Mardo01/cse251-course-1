@@ -22,6 +22,7 @@ from datetime import datetime, timedelta
 import requests
 import json
 import threading
+import multiprocessing as mp
 
 # Include cse 251 common Python files
 from cse251 import *
@@ -39,7 +40,6 @@ class Request_Thread(threading.Thread):
   # create constructor
   def __init__(self, url):
     threading.Thread.__init__(self)
-
     self.url = url
     self.response = {}
 
@@ -55,50 +55,91 @@ class Request_Thread(threading.Thread):
         print("Didn't work", response.status_code)
 
 # TODO Add any functions you need here
-def get_top_url(url):
+def sync_request(url) -> dict:
     req = Request_Thread(url)
     req.start()
     req.join()
     #print(req.response)
     return req.response
 
-def get_film_six_details(url):
-   req = Request_Thread(url["films"] + "6/")
-   req.start()
-   req.join()
-   #print(req.response)
-   return req.response
-
-def get_character(url):
-  for i in url.values():
-    req = Request_Thread(url["characters"][i])
+def start_request(url: str) -> Request_Thread:
+    req = Request_Thread(url)
     req.start()
-    req.join()
-    print(req.response["name"])
+    return req
+
+def get_name_from_request(req:Request_Thread) -> str:
+   req.join()
+   return req.response['name']
+
+def new_request(url, category) -> dict:
+  req = Request_Thread(url)
+  req.start()
+  req.join()
+  return (req.response, category)
+
+
+class StarWarsResult():
+   def __init__(self):
+      self.server_results = {}
+      self.call_count = 0
+   
+   def process_json(self, response):
+    (json_data, category) = response
+    if category not in self.server_results:
+       self.server_results[category] = []
+    self.server_results[category].append(json_data['name'])
+    self.call_count += 1
 
 
 def main():
     log = Log(show_terminal=True)
     log.start_timer('Starting to retrieve data from the server')
 
+    pool = mp.Pool(8)
+
+    sw_results = StarWarsResult()
+
     # TODO Retrieve Top API urls
-    main_url = get_top_url(TOP_API_URL)
+    main_url = sync_request(TOP_API_URL)
     #print(main_url["films"])
 
     # TODO Retrieve Details on film 6
-    film_detail = get_film_six_details(main_url)
-    #print(film_detail)
-    name1 = get_character(film_detail)
+    film_detail = sync_request(main_url['films'] + '6')
+    server_requests = {}
+    server_results = {}
 
+    for key, detail in film_detail.items():
+       if isinstance(detail, list):
+          server_requests[key] = [pool.apply_async(new_request, args=(x, key), callback= sw_results.process_json) for x in detail]
+
+    pool.close()
+    pool.join()
+
+    for key, detail in film_detail.items():
+       if isinstance(detail, list):
+          #server_results[key] = [x.get()[0]['name'] for x in server_requests[key]]
+          sw_results.server_results[key].sort()
 
     # TODO Display results
+    log.write("---------------------------------------")
+    log.write(f"Title: {film_detail['title']}")
+    log.write(f"Director: {film_detail['director']}")
+    log.write(f"Producer: {film_detail['producer']}")
+    log.write(f"Released: {film_detail['release_date']}")
+    log.write_blank_line()
+
+    for key,detail in film_detail.items():
+       if isinstance(detail, list):
+          log.write(f'{key.title()}: {len(sw_results.server_results[key])}')
+          log.write(f','.join(sw_results.server_results[key]))
+          log.write_blank_line()
 
 
     #characters.sort()
     #log.write(f'Characters: {len(resonses["characters"])}')
     #log.write(', '.join(characters))
     log.stop_timer('Total Time To complete')
-    log.write(f'There were {call_count} calls to the server')
+    log.write(f'There were {call_count + sw_results.call_count} calls to the server')
     
 
 if __name__ == "__main__":
