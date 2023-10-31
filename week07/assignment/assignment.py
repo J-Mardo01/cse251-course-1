@@ -9,6 +9,11 @@ Instructions:  See I-Learn
 
 TODO
 
+I used apool size of 1 for the primes pool, 1 for the word search pool, 1 for the upper case pool, 4 for the sum pool and 5 for the name
+pool. These sixes gave me the best constant performance. I Whenever I tried to allocate more cores to the first three pools, the time 
+would slow down quite a bit, causing me to believe that the last two tasks were the most demanding. Therefore, allocating cores to start
+those tasks as soon as possible was necessary.
+
 Add your comments here on the pool sizes that you used for your assignment and
 why they were the best choices.
 
@@ -62,7 +67,13 @@ def task_prime(value):
             - or -
         {value} is not prime
     """
-    pass
+    if is_prime(value) == True:
+        return (f"{value} is prime")
+    else:
+        return (f"{value} is not prime")
+    
+def task_result_primes(result:str):
+    result_primes.append(result)
 
 def task_word(word):
     """
@@ -72,21 +83,39 @@ def task_word(word):
             - or -
         {word} not found *****
     """
-    pass
+    with open('words.txt', 'r') as file:
+        words = file.read()
+        if word in words:
+            return (f"{word} found.")
+        else:
+            return (f"{word} not found.")
+        
+def task_result_words(result:str):
+    result_words.append(result)
 
 def task_upper(text):
     """
     Add the following to the global list:
         {text} ==>  uppercase version of {text}
     """
-    pass
+    upper = text.upper()
+    return (f"{upper} ==> uppercase version of {text}")
+
+def task_result_upper(result:str):
+    result_upper.append(result)
 
 def task_sum(start_value, end_value):
     """
     Add the following to the global list:
         sum of {start_value:,} to {end_value:,} = {total:,}
     """
-    pass
+    total = 0
+    for num in range(start_value, end_value + 1):
+        total += num
+    return (f"sum of {start_value:,} to {end_value:,} = {total:,}")
+
+def task_result_sum(result:str):
+    result_sums.append(result)
 
 def task_name(url):
     """
@@ -96,7 +125,19 @@ def task_name(url):
             - or -
         {url} had an error receiving the information
     """
-    pass
+    response = requests.get(url)
+
+    if response.ok:
+        data = response.json()
+        name = data["name"]
+        return (f"{url} has name {name}")
+    else:
+        return (f"{url} had an error receiving the information")
+    
+def task_result_names(result:str):
+    result_names.append(result)
+
+
 
 
 def main():
@@ -104,10 +145,14 @@ def main():
     log.start_timer()
 
     # TODO Create process pools
-
+    pool_prime = mp.Pool(1)    #1,1,1,4,5 --> 10.8411
+    pool_word = mp.Pool(1)
+    pool_upper = mp.Pool(1)
+    pool_sum = mp.Pool(4)
+    pool_name = mp.Pool(5)
     # TODO you can change the following
     # TODO start and wait pools
-    
+
     count = 0
     task_files = glob.glob("*.task")
     for filename in task_files:
@@ -118,19 +163,29 @@ def main():
         count += 1
         task_type = task['task']
         if task_type == TYPE_PRIME:
-            task_prime(task['value'])
+            pool_prime.apply_async(task_prime, args = (task['value'],), callback=task_result_primes)
         elif task_type == TYPE_WORD:
-            task_word(task['word'])
+            pool_word.apply_async(task_word, args = (task['word'],), callback=task_result_words)
         elif task_type == TYPE_UPPER:
-            task_upper(task['text'])
+            pool_upper.apply_async(task_upper, args = (task['text'],), callback=task_result_upper)
         elif task_type == TYPE_SUM:
-            task_sum(task['start'], task['end'])
+            pool_sum.apply_async(task_sum, args= (task['start'], task['end']), callback=task_result_sum)
         elif task_type == TYPE_NAME:
-            task_name(task['url'])
+            pool_name.apply_async(task_name, args= (task['url'],), callback=task_result_names)
         else:
             log.write(f'Error: unknown task type {task_type}')
 
-
+    pool_prime.close()
+    pool_word.close()
+    pool_upper.close()
+    pool_sum.close()
+    pool_name.close()
+    
+    pool_prime.join()
+    pool_word.join()
+    pool_upper.join()
+    pool_sum.join()
+    pool_name.join()
 
     # Do not change the following code (to the end of the main function)
     def log_list(lst, log):
