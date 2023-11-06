@@ -109,10 +109,13 @@ def task_sum(start_value, end_value):
     Add the following to the global list:
         sum of {start_value:,} to {end_value:,} = {total:,}
     """
-    total = 0
-    for num in range(start_value, end_value + 1):
-        total += num
+    #total = 0
+    #for num in range(start_value, end_value + 1):
+        #total += num
+    total = (end_value - start_value + 1) * (start_value + end_value ) >> 1
     return (f"sum of {start_value:,} to {end_value:,} = {total:,}")
+
+    total = (end_value - start_value + 1) * (start_value + end_value ) >> 1 #<-- works quicker than range
 
 def task_result_sum(result:str):
     result_sums.append(result)
@@ -145,7 +148,7 @@ def main():
     log.start_timer()
 
     # TODO Create process pools
-    pool_prime = mp.Pool(1)    #1,1,1,4,5 --> 10.8411
+    pool_prime = mp.Pool(2)    #1,1,1,4,5 --> 10.8411
     pool_word = mp.Pool(1)
     pool_upper = mp.Pool(1)
     pool_sum = mp.Pool(4)
