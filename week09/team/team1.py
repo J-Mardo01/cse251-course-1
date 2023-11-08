@@ -56,9 +56,22 @@ import threading
 PHILOSOPHERS = 5
 MAX_MEALS_EATEN = PHILOSOPHERS * 5
 
+class Philosopher():
+    
+    def __init__(self):
+        pass
+    
+    def eat():
+        pass
+    def think():
+        pass
+
 def main():
     # TODO - create the forks
+    for x in range(5):
+      forks = threading.Semaphore()
     # TODO - create PHILOSOPHERS philosophers
+    philosophers = []
     # TODO - Start them eating and thinking
     # TODO - Display how many times each philosopher ate
 
