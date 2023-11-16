@@ -28,12 +28,32 @@ speed = SLOW_SPEED
 
 # TODO add any functions
 
+def find_end(maze, row, col, path):
+    if maze.at_end(row, col):
+        print("Made it to the end.")
+        maze.move(row, col, COLOR)
+        return True
+    if maze.can_move_here(row, col):
+        maze.move(row, col, COLOR)
+
+        possible_moves = maze.get_possible_moves(row, col)
+        for m in possible_moves:
+            if find_end(maze, m[0], m[1], path) == True:
+                path.append(m)
+                return True
+        maze.restore(row, col)
+        return False
+
 def solve_path(maze):
     """ Solve the maze and return the path found between the start and end positions.  
         The path is a list of positions, (x, y) """
         
     # TODO start add code here
     path = []
+    start = maze.get_start_pos()
+    find_end(maze, start[0], start[1], path)
+    path.reverse()
+    print("Path", path)
     return path
 
 
