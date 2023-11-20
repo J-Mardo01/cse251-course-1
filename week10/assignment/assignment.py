@@ -2,7 +2,7 @@
 Course: CSE 251
 Lesson Week: 10
 File: assignment.py
-Author: <your name>
+Author: Jonathan Mardo
 
 Purpose: assignment for week 10 - reader writer problem
 
@@ -65,6 +65,66 @@ BUFFER_SIZE = 10
 READERS = 2
 WRITERS = 2
 
+INSERT = BUFFER_SIZE
+REMOVE = BUFFER_SIZE + 1
+COUNT = BUFFER_SIZE + 2
+ITEMS_RECEIVED = BUFFER_SIZE + 3
+
+def write_values(shared_list, items_to_send, full_sem, empty_sem, lock):
+  count = 0
+  done = False
+  index = 0
+
+  # Writing values to the index
+  while not done:
+    empty_sem.acquire()
+    with lock:
+      count = shared_list[COUNT]
+      if count >= items_to_send:
+        done = True
+        break
+      index = shared_list[INSERT]
+      shared_list[index] = count
+      shared_list[COUNT] += 1
+      shared_list[INSERT] = (index + 1) % BUFFER_SIZE
+    full_sem.release()
+
+
+  
+  # Send a message to the reader
+  for _ in range(READERS):
+    empty_sem.acquire()
+    with lock:
+      index = shared_list[INSERT]
+      shared_list[index] = "F"
+      shared_list[INSERT] = (index + 1) % BUFFER_SIZE
+    full_sem.release()
+
+def read_values(shared_list, items_to_send, full, empty):
+  received = 0
+  total_received = 0
+  done = False
+  index = 0
+
+  while not done:
+    full.acquire()
+
+    received = shared_list[ITEMS_RECEIVED]
+    if received >= items_to_send:
+      done = True
+      break
+    print(received)
+    total_received += 1
+    index = shared_list[REMOVE]
+    shared_list[index] = received
+    shared_list[ITEMS_RECEIVED] += 1
+    shared_list[REMOVE] = (index + 1) % BUFFER_SIZE
+
+    empty.release()
+
+  return received
+
+
 def main():
 
     # This is the number of values that the writer will send to the reader
@@ -83,12 +143,28 @@ def main():
     #        You can add another value to the sharedable list to keep
     #        track of the number of values received by the readers.
     #        (ie., [0] * (BUFFER_SIZE + 4))
+    shared_list = smm.ShareableList([0] * (BUFFER_SIZE + 4))
 
     # TODO - Create any lock(s) or semaphore(s) that you feel you need
+    empty_sem = mp.Manager().Semaphore(BUFFER_SIZE)
+    full_sem = mp.Manager().Semaphore(0)
+
+    lock = mp.Manager().Lock()
 
     # TODO - create reader and writer processes
-
     # TODO - Start the processes and wait for them to finish
+    writer = [mp.Process(target= write_values, args=(shared_list, items_to_send, full_sem, empty_sem, lock)) for _ in range(WRITERS)]
+    reader = [mp.Process(target= read_values, args=(shared_list, items_to_send, full_sem, empty_sem)) for _ in range(READERS)]
+
+    for x in writer:
+      x.start()
+    for y in reader:
+      y.start()
+
+    for x in writer:
+      x.join()
+    for y in reader:
+      y.join()
 
     print(f'{items_to_send} values sent')
 
@@ -96,6 +172,8 @@ def main():
     #        Can not use "items_to_send", must be a value collected
     #        by the reader processes.
     # print(f'{<your variable>} values received')
+    items_received = read_values(shared_list, items_to_send, full_sem,empty_sem)
+    print(f"{items_received} values received.")
 
     smm.shutdown()
 
