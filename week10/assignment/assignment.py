@@ -90,7 +90,6 @@ def write_values(shared_list, items_to_send, full_sem, empty_sem, lock):
     full_sem.release()
 
 
-  
   # Send a message to the reader
   for _ in range(READERS):
     empty_sem.acquire()
@@ -172,7 +171,7 @@ def main():
     #        Can not use "items_to_send", must be a value collected
     #        by the reader processes.
     # print(f'{<your variable>} values received')
-    items_received = read_values(shared_list, items_to_send, full_sem,empty_sem)
+    items_received = read_values(shared_list, items_to_send, full_sem, empty_sem)
     print(f"{items_received} values received.")
 
     smm.shutdown()
