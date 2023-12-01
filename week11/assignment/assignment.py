@@ -35,7 +35,7 @@ def guest_partying(id, count):
     print(f'Guest: {id}, count = {count}')
     time.sleep(random.uniform(0, 1))
 
-def cleaner(lock_guest, lock_cleaner, cleaned_count):
+def cleaner(lock1, lock2, cleaned_count):
     """
     do the following for TIME seconds
         cleaner will wait to try to clean the room (cleaner_waiting())
@@ -45,16 +45,16 @@ def cleaner(lock_guest, lock_cleaner, cleaned_count):
         display message STOPPING_CLEANING_MESSAGE
     """
     while True:
-        with lock_guest:
+        with lock1:
             cleaner = []
             id = list(range(1, CLEANING_STAFF + 1))
             for x in id:
-                lock_cleaner.acquire()
+                lock2.acquire()
                 print(STARTING_CLEANING_MESSAGE)
                 cleaned_count.value += 1
                 cleaner_cleaning(x)
                 print(STOPPING_CLEANING_MESSAGE)
-                lock_cleaner.release()
+                lock2.release()
                 cleaner.append(x)
             
             if len(cleaner) == CLEANING_STAFF:
@@ -63,7 +63,7 @@ def cleaner(lock_guest, lock_cleaner, cleaned_count):
 
             cleaner_waiting()
 
-def guest(lock_guest, lock_cleaner, party_count):
+def guest(lock1, lock2, party_count):
     """
     do the following for TIME seconds
         guest will wait to try to get access to the room (guest_waiting())
@@ -74,20 +74,20 @@ def guest(lock_guest, lock_cleaner, party_count):
     """
     partying = True
     while partying:
-        with lock_guest:
+        with lock1:
             guest = []
             id = list(range(1, HOTEL_GUESTS + 1))
-            lock_cleaner.acquire()
+            lock2.acquire()
             print(STARTING_PARTY_MESSAGE)
 
         for x in id:
-            guest_partying(x, len(guest))
+            guest_partying(x, len(guest) + 1)
             guest.append(x)
         
         if len(guest) == HOTEL_GUESTS:
             guest.clear()
             print(STOPPING_PARTY_MESSAGE)
-            lock_cleaner.release()
+            lock2.release()
             partying = False
         party_count.value += 1
 
@@ -98,8 +98,8 @@ def main():
     start_time = time.time()
 
     # creating locks for both guests and cleaners
-    lock_guest = mp.Lock()
-    lock_cleaner = mp.Lock()
+    lock1 = mp.Lock() #lock_guest
+    lock2 = mp.Lock() #lock_cleaner
 
     # TODO - add any variables, data structures, processes you need
 
@@ -112,9 +112,9 @@ def main():
     # Run program
     while time.time() - start_time <= TIME:  #<- Checks to see if current run time is less than TIME
 
-        cleaner_process = mp.Process(target = cleaner, args=(lock_guest, lock_cleaner, cleaned_count))
+        cleaner_process = mp.Process(target = cleaner, args=(lock1, lock2, cleaned_count))
 
-        guest_process = mp.Process(target = guest, args=(lock_guest, lock_cleaner, party_count))
+        guest_process = mp.Process(target = guest, args=(lock1, lock2, party_count))
 
         guest_process.start()
         cleaner_process.start()
@@ -123,7 +123,7 @@ def main():
         cleaner_process.join()
 
     # Results
-    print(f'Room was cleaned {cleaned_count} times, there were {party_count} parties')
+    print(f'Room was cleaned {cleaned_count.value} times, there were {party_count.value} parties')
 
 
 if __name__ == '__main__':
