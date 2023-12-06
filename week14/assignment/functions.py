@@ -1,7 +1,7 @@
 """
 Course: CSE 251, week 14
 File: functions.py
-Author: <your name>
+Author: Jonathan Mardo
 
 Instructions:
 
@@ -60,10 +60,19 @@ from common import *
 import queue
 
 # -----------------------------------------------------------------------------
-def depth_fs_pedigree(family_id, tree):
+def depth_fs_pedigree(family_id, tree:Tree):
     # KEEP this function even if you don't implement it
     # TODO - implement Depth first retrieval
     # TODO - Printing out people and families that are retrieved from the server will help debugging
+    request = Request_thread(f'{TOP_API_URL}/person/{family_id}')
+    request.start()
+    request.join()
+    data = request.get_response()
+    if data == None:
+        return
+    tree.add_family(Family(data))
+
+
 
     pass
 
