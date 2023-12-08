@@ -67,13 +67,13 @@ def depth_fs_pedigree(family_id, tree:Tree):
     req = Request_thread(f'{TOP_API_URL}/family/{family_id}')
     req.start()
     req.join()
-    data = req.get_response()
-    tree.add_family(Family(data))
-    if data == None:
+    new_family = req.get_response()
+    tree.add_family(Family(new_family))
+    if new_family == None:
         return
-    husband_id = data['husband_id']
-    wife_id = data['wife_id']
-    children_id = [children for children in data['children'] if not tree.does_person_exist(children)]
+    husband_id = new_family['husband_id']
+    wife_id = new_family['wife_id']
+    children_id = [children for children in new_family['children'] if not tree.does_person_exist(children)]
     request_p = [Request_thread(f'{TOP_API_URL}/person/{id}') for id in [husband_id, wife_id]]
     
     for t in request_p:
