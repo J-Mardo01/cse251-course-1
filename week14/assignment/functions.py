@@ -64,17 +64,45 @@ def depth_fs_pedigree(family_id, tree:Tree):
     # KEEP this function even if you don't implement it
     # TODO - implement Depth first retrieval
     # TODO - Printing out people and families that are retrieved from the server will help debugging
-    request = Request_thread(f'{TOP_API_URL}/person/{family_id}')
-    request.start()
-    request.join()
-    data = request.get_response()
+    req = Request_thread(f'{TOP_API_URL}/family/{family_id}')
+    req.start()
+    req.join()
+    data = req.get_response()
+    tree.add_family(Family(data))
     if data == None:
         return
-    tree.add_family(Family(data))
+    husband_id = data['husband_id']
+    wife_id = data['wife_id']
+    children_id = [children for children in data['children'] if not tree.does_person_exist(children)]
+    request_p = [Request_thread(f'{TOP_API_URL}/person/{id}') for id in [husband_id, wife_id]]
+    
+    for t in request_p:
+        t.start()
+    for t in request_p:
+        t.join()
 
+    parents = [Person(x.get_response()) for x in request_p]
+    family_threads = [threading.Thread(target = depth_fs_pedigree, args = (parents, tree)) for x in parents if x is not None]
+    children_threads = [Request_thread(f'{TOP_API_URL}/person/{id}') for id in [children_id]]
+    
+    for c in children_threads:
+        c.start()
+    
+    for person in parents:
+        tree.add_person(person)
 
+    for f in family_threads:
+        f.start()
 
-    pass
+    for c in children_threads:
+        c.join()
+    for f in family_threads:
+        f.join()
+
+    for child in children_threads:
+        c = child.get_response()
+        if c is not None:
+            tree.add_person(Person(c))
 
 # -----------------------------------------------------------------------------
 def breadth_fs_pedigree(family_id, tree):
