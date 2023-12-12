@@ -1,15 +1,87 @@
-20:16:53| 
+18:58:18| 
 
-20:16:53| #############################################
-20:16:53| Depth First Search: 6 generations
-20:16:53| #############################################
-20:16:54| 0.77675460
-20:16:54| 
+18:58:18| #############################################
+18:58:18| Depth First Search: 6 generations
+18:58:18| #############################################
+18:58:19| 0.78221332
+18:58:19| 
 
 
-20:16:54| ************* TREE DISPLAY *************
-20:16:54| Family id: 5000250616
-20:16:54|   Husband: David, 13-9-1950
-20:16:54|   Wife: Mia, 7-10-2003
-20:16:54|   Husband Parents: None
-20:16:54|   Wife Parents: None
+18:58:19| ************* TREE DISPLAY *************
+18:58:19| Family id: 5007562500
+18:58:19|   Husband: Dylan, 4-2-1841
+18:58:19|   Wife: Camila, 8-6-1830
+18:58:19|   Husband Parents: None
+18:58:19|   Wife Parents: None
+18:58:19|   Children: Mila, William, Grace, Lucas
+18:58:19| 
+18:58:19| Number of people                    : 6
+18:58:19| Number of families                  : 1
+18:58:19| Max generations                     : 1
+18:58:19| People connected to starting family : 6
+18:58:19| 
+18:58:19| total_time                    : 0.78221
+18:58:19| Generations                   : 6
+18:58:19| People % Families / second    : 8.94897
+18:58:19| 
+18:58:19| STATS        Retrieved | Server details
+18:58:19| People  :            6 |            466
+18:58:19| Families:            1 |             63
+18:58:19| API Calls            : 11
+18:58:19| Max number of threads: 6
+18:58:19| 
+
+18:58:19| #############################################
+18:58:19| Breadth First Search: 6 generations
+18:58:19| #############################################
+18:58:20| 1.05886658
+18:58:21| 
+
+
+18:58:21| ************* TREE DISPLAY *************
+18:58:21| Family id: 5007562500
+18:58:21|   Husband: Benjamin, 2-6-1944
+18:58:21|   Wife: Lillian, 26-9-1800
+18:58:21|   Husband Parents: None
+18:58:21|   Wife Parents: None
+18:58:21|   Children: Audrey, Bella, Camila, David, Alexander, Willow, Josiah, Zoey
+18:58:21| 
+18:58:21| Number of people                    : 10
+18:58:21| Number of families                  : 1
+18:58:21| Max generations                     : 1
+18:58:21| People connected to starting family : 10
+18:58:21| 
+18:58:21| total_time                    : 1.05887
+18:58:21| Generations                   : 6
+18:58:21| People % Families / second    : 10.38847
+18:58:21| 
+18:58:21| STATS        Retrieved | Server details
+18:58:21| People  :           10 |            461
+18:58:21| Families:            1 |             63
+18:58:21| API Calls            : 15
+18:58:21| Max number of threads: 8
+18:58:21| 
+
+18:58:21| #############################################
+18:58:21| Breadth First Search limit 5: 6 generations
+18:58:21| #############################################
+18:58:21| 0.00006321
+18:58:21| 
+
+
+18:58:21| ************* TREE DISPLAY *************
+18:58:21| 
+18:58:21| Number of people                    : 0
+18:58:21| Number of families                  : 0
+18:58:21| Max generations                     : 0
+18:58:21| People connected to starting family : 0
+18:58:21| 
+18:58:21| total_time                    : 0.00006
+18:58:21| Generations                   : 6
+18:58:21| People % Families / second    : 0.00000
+18:58:21| 
+18:58:21| STATS        Retrieved | Server details
+18:58:21| People  :            0 |            469
+18:58:21| Families:            0 |             63
+18:58:21| API Calls            : 2
+18:58:21| Max number of threads: 1
